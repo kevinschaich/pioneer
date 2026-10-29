@@ -6,11 +6,11 @@ import {
 import ELK from "elkjs/lib/elk.bundled.js"
 import { Factory, LayoutGrid, Maximize } from "lucide-react"
 import { useMapUi } from "@/components/map/map-context"
-import { Button } from "@/components/ui/button"
 import { edgeTypes, type FlowEdge } from "@/components/graph/flow-edge"
 import { nodeTypes } from "@/components/graph/nodes"
 import { isLiquid } from "@/lib/game"
 import { usePlanner } from "@/lib/store"
+import { Button } from "@kevinschaich/components"
 
 const elk = new ELK()
 const ELK_OPTIONS = {
@@ -59,7 +59,7 @@ function placeNear(id: string, edges: FlowEdge[], placed: Record<string, { x: nu
   return p
 }
 
-function Graph({ dark, onShowMap }: { dark: boolean; onShowMap: () => void }) {
+function Graph({ onShowMap }: { onShowMap: () => void }) {
   const { runSiteSearch } = useMapUi()
   const model = useGraphModel()
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -116,7 +116,7 @@ function Graph({ dark, onShowMap }: { dark: boolean; onShowMap: () => void }) {
     <ReactFlow
       nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
       nodeTypes={nodeTypes} edgeTypes={edgeTypes}
-      colorMode={dark ? "dark" : "light"}
+      colorMode="dark"
       minZoom={0.1} maxZoom={2} proOptions={{ hideAttribution: true }}
       nodesConnectable={false} edgesFocusable={false} deleteKeyCode={null}
       className="bg-canvas"
@@ -140,10 +140,10 @@ function Graph({ dark, onShowMap }: { dark: boolean; onShowMap: () => void }) {
   )
 }
 
-export function FactoryGraph({ dark, onShowMap }: { dark: boolean; onShowMap: () => void }) {
+export function FactoryGraph({ onShowMap }: { onShowMap: () => void }) {
   return (
     <ReactFlowProvider>
-      <Graph dark={dark} onShowMap={onShowMap} />
+      <Graph onShowMap={onShowMap} />
     </ReactFlowProvider>
   )
 }

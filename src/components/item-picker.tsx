@@ -1,10 +1,8 @@
 import { useState } from "react"
 import { ChevronsUpDown, Check } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { itemIcon, itemName } from "@/lib/game"
 import { cn } from "@/lib/utils"
+import { Button, Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Popover, PopoverContent, PopoverTrigger } from "@kevinschaich/components"
 
 export function Icon({ src, size = 20, className, title }: { src: string; size?: number; className?: string; title?: string }) {
   if (!src) return null
@@ -25,14 +23,12 @@ export function ItemPicker({ value, items, onChange, className, placeholder = "S
   const [open, setOpen] = useState(false)
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" size={size} className={cn("w-full justify-between font-normal", className)}>
+      <PopoverTrigger render={<Button variant="outline" role="combobox" size={size} className={cn("w-full justify-between font-normal", className)} />}>
           <span className="flex min-w-0 items-center gap-2">
             {value && <ItemIcon id={value} size={size === "sm" ? 16 : 20} />}
             <span className="truncate">{value ? itemName(value) : placeholder}</span>
           </span>
           <ChevronsUpDown className="size-3.5 opacity-50" />
-        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0" align="start">
         <Command>

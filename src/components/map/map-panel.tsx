@@ -1,11 +1,4 @@
 import { CircleCheck, Eye, EyeOff, Factory, MousePointer2, RotateCcw, X } from "lucide-react"
-import { Slider } from "@/components/ui/slider"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Switch } from "@/components/ui/switch"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Icon, ItemIcon } from "@/components/item-picker"
 import { MinerControls, Section } from "@/components/sidebar"
 import { useMapUi } from "@/components/map/map-context"
@@ -15,6 +8,7 @@ import { MAP_RESOURCES, PURITY_COLOR, WORLD_NODES, distLabel, metres, nodeById, 
 import type { MapFilter } from "@/lib/solver"
 import { usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { Button, Label, ScrollArea, Separator, Slider, Switch, ToggleGroup, ToggleGroupItem } from "@kevinschaich/components"
 
 const PURITIES = Object.keys(PURITY) as Purity[]
 
@@ -25,15 +19,15 @@ export function MapPanel() {
   const setMap = (patch: Partial<MapFilter>) => update((s) => ({ map: { ...s.map, ...patch } }))
 
   return (
-    <ScrollArea className="min-h-0 flex-1 [&_[data-radix-scroll-area-viewport]>div]:!block">
+    <ScrollArea className="min-h-0 flex-1 [&_[data-slot=scroll-area-viewport]>div]:!block">
       <Section title="My base">
         <p className="text-[11px] text-muted-foreground">
           Your base is every node you've marked extracted. Shortcuts on any node: ⌘-click or right-click marks it extracted, Ctrl-click adds it to the planner.
         </p>
-        <ToggleGroup type="single" variant="outline" className="w-full" value={clickMode}
-          onValueChange={(v) => v && setClickMode(v as "inspect" | "extract")}>
+        <ToggleGroup variant="outline" className="w-full" value={[clickMode]}
+          onValueChange={([v]) => v && setClickMode(v as "inspect" | "extract")}>
           <ToggleGroupItem value="inspect" className="flex-1 gap-1.5 text-xs"><MousePointer2 className="size-3.5" />Inspect</ToggleGroupItem>
-          <ToggleGroupItem value="extract" className="flex-1 gap-1.5 text-xs data-[state=on]:text-emerald-500"><CircleCheck className="size-3.5" />Mark extracted</ToggleGroupItem>
+          <ToggleGroupItem value="extract" className="flex-1 gap-1.5 text-xs data-[pressed]:text-emerald-500"><CircleCheck className="size-3.5" />Mark extracted</ToggleGroupItem>
         </ToggleGroup>
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-lg border bg-card/50 px-3 py-2">
@@ -53,7 +47,7 @@ export function MapPanel() {
             <Label className="text-xs">Build sites stay near base</Label>
             <span className="text-muted-foreground">{["Ignore", "Light", "Normal", "Strong", "Very strong"][Math.round(state.basePull * 2)]}</span>
           </div>
-          <Slider min={0} max={2} step={0.5} value={[state.basePull]} disabled={!usedCount} onValueChange={([basePull]) => update({ basePull })} />
+          <Slider min={0} max={2} step={0.5} value={[state.basePull]} disabled={!usedCount} onValueChange={(v) => update({ basePull: typeof v === "number" ? v : v[0] })} />
         </div>
       </Section>
 
@@ -77,7 +71,7 @@ export function MapPanel() {
 
       <Separator />
       <Section title="Purity">
-        <ToggleGroup type="multiple" variant="outline" className="w-full" value={f.purities}
+        <ToggleGroup multiple variant="outline" className="w-full" value={f.purities}
           onValueChange={(v) => setMap({ purities: v as Purity[] })}>
           {PURITIES.map((p) => (
             <ToggleGroupItem key={p} value={p} className="flex-1 gap-1.5 text-xs capitalize">

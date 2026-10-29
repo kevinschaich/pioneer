@@ -1,6 +1,20 @@
+[![Satisfactory Planner by kevinschaich](https://kevinschaich.com/og/satisfactory-planner.png)](https://kevinschaich.com/project/satisfactory-planner/)
+
 # Satisfactory Planner
 
-A personal planning companion for Satisfactory 1.0: production planning from your own resource nodes, a world map of every node, and power generation from fuel products.
+Plan your Satisfactory factory from your own resource nodes
+
+**[Try it →](https://kevinschaich.com/project/satisfactory-planner/)**
+
+## How it works
+
+- **Planner**: pick what to make and how much; it builds the production chain from the nodes you've marked as yours, with the machines, power and build cost.
+- **Map**: every resource node, well and geyser in the world. Mark the ones you've extracted and it plans around them.
+- **Power**: generators fed by fuel products, counted into the plan.
+
+Everything runs in your browser and is saved there.
+
+## Run locally
 
 ```bash
 bun install
@@ -34,10 +48,9 @@ Everything below came from somewhere else. This project is unofficial and not af
 | [React](https://react.dev) | MIT |
 | [Vite](https://vitejs.dev) | MIT |
 | [Tailwind CSS](https://tailwindcss.com) | MIT |
-| [shadcn/ui](https://ui.shadcn.com) components | MIT |
-| [Radix UI](https://www.radix-ui.com) | MIT |
+| [shadcn/ui](https://ui.shadcn.com) components (via `@kevinschaich/components`) | MIT |
+| [Base UI](https://base-ui.com) | MIT |
 | [React Flow (@xyflow/react)](https://reactflow.dev) | MIT |
 | [elkjs](https://github.com/kieler/elkjs) (graph layout) | EPL-2.0 |
-| [cmdk](https://github.com/pacocoursey/cmdk) | MIT |
 | [Lucide](https://lucide.dev) icons | ISC |
-| [class-variance-authority](https://github.com/joe-bell/cva), [clsx](https://github.com/lukeed/clsx), [tailwind-merge](https://github.com/dcastil/tailwind-merge), [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
+| [clsx](https://github.com/lukeed/clsx), [tailwind-merge](https://github.com/dcastil/tailwind-merge) | MIT |

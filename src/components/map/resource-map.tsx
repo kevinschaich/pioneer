@@ -1,7 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import { Check, Factory, Home, Workflow, Maximize, MousePointerClick, Minus, Plus, X } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Icon, ItemIcon } from "@/components/item-picker"
 import { useMapUi } from "@/components/map/map-context"
 import { fmt, itemIcon, itemName, unit } from "@/lib/game"
@@ -13,10 +11,11 @@ import type { Site } from "@/lib/site"
 import type { PlannerState } from "@/lib/solver"
 import { usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { Badge, Button } from "@kevinschaich/components"
 
 const MAX_K = 6
 const TILE_MAX_Z = 6
-export const GEYSER_ICON = "/icons/desc-generatorgeothermal-c.png"
+export const GEYSER_ICON = "icons/desc-generatorgeothermal-c.png"
 const iconFor = (n: WorldNode) => (n.res === GEYSER ? GEYSER_ICON : itemIcon(n.res))
 type View = { x: number; y: number; k: number; w: number; h: number }
 
@@ -40,7 +39,7 @@ function warmTiles() {
   if (warmed) return
   warmed = true
   const queue: string[] = []
-  for (let z = 1; z <= 5; z++) for (let x = 0; x < 2 ** z; x++) for (let y = 0; y < 2 ** z; y++) queue.push(`/tiles/${z}/${x}/${y}.webp`)
+  for (let z = 1; z <= 5; z++) for (let x = 0; x < 2 ** z; x++) for (let y = 0; y < 2 ** z; y++) queue.push(`tiles/${z}/${x}/${y}.webp`)
   const next = () => {
     const batch = queue.splice(0, 24)
     if (!batch.length) return
@@ -58,9 +57,9 @@ const TileLayer = memo(function TileLayer({ v }: { v: View }) {
   const levels = z > 1 ? [z - 1, z] : z === 1 ? [1] : []
   return (
     <>
-            <img src="/tiles/0/0/0.webp" width={MAP_PX} height={MAP_PX} alt="" draggable={false} className="pointer-events-none absolute inset-0" />
+            <img src="tiles/0/0/0.webp" width={MAP_PX} height={MAP_PX} alt="" draggable={false} className="pointer-events-none absolute inset-0" />
       {levels.flatMap((lz) => visibleTiles(v, lz)).map((t) => (
-        <img key={t.key} src={`/tiles/${t.key}.webp`} alt="" draggable={false} decoding="async"
+        <img key={t.key} src={`tiles/${t.key}.webp`} alt="" draggable={false} decoding="async"
           className="pointer-events-none absolute"
           // +0.5px overlap hides hairline seams between tiles.
           style={{ left: t.x * t.size, top: t.y * t.size, width: t.size + 0.5, height: t.size + 0.5 }} />

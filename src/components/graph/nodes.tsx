@@ -1,18 +1,13 @@
 import type { ReactNode } from "react"
 import { Handle, Position, type NodeProps, type Node } from "@xyflow/react"
 import { AlertTriangle, GitMerge, Plus, Split, X } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Icon, ItemIcon } from "@/components/item-picker"
 import { D, PURITY, RESOURCES, extractorFor, fmt, itemName, machineIcon, recipeName, recipesFor, unit, type Purity } from "@/lib/game"
 import type { GroupPlan, Junction, MinerPlan, PowerPlan, Sink } from "@/lib/plan"
 import { recipeOf, shardsFor, type NodeInput, type PartInput } from "@/lib/solver"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { Badge, Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Slider, ToggleGroup, ToggleGroupItem } from "@kevinschaich/components"
 
 export type MinerNode = Node<{ miner: MinerPlan }, "miner">
 export type SupplyNode = Node<{ part: PartInput }, "supply">
@@ -61,7 +56,7 @@ export function MinerNodeView({ data: { miner: m } }: NodeProps<MinerNode>) {
   return (
     <Card inputs={false} className="w-60">
       <div className="flex items-center gap-3 p-3 pb-2">
-        <IconTile src={machineIcon(extractor)} badge={`/icons/${D.items[item]?.icon}.png`} />
+        <IconTile src={machineIcon(extractor)} badge={`icons/${D.items[item]?.icon}.png`} />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{itemName(item)}</div>
           <div className="text-[11px] text-muted-foreground">{D.machines[extractor].name}</div>
@@ -70,7 +65,7 @@ export function MinerNodeView({ data: { miner: m } }: NodeProps<MinerNode>) {
       </div>
       <div className="nodrag space-y-2.5 px-3 pb-3">
         {!row.well && item !== "Desc_Water_C" && (
-          <ToggleGroup type="single" size="sm" variant="outline" className="w-full" value={row.purity} onValueChange={(v) => v && edit({ purity: v as Purity })}>
+          <ToggleGroup size="sm" variant="outline" className="w-full" value={[row.purity]} onValueChange={([v]) => v && edit({ purity: v as Purity })}>
             {Object.keys(PURITY).map((p) => <ToggleGroupItem key={p} value={p} className="h-6 flex-1 text-[10px] capitalize">{p}</ToggleGroupItem>)}
           </ToggleGroup>
         )}
@@ -81,7 +76,7 @@ export function MinerNodeView({ data: { miner: m } }: NodeProps<MinerNode>) {
               ? <button type="button" className="text-[11px] text-brand underline-offset-2 hover:underline" onClick={() => edit({ clock: undefined })}>Back to auto</button>
               : <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">Auto</span>}
           </div>
-          <Slider min={0} max={250} step={1} value={[m.clock]} onValueChange={([v]) => edit({ clock: v })} />
+          <Slider min={0} max={250} step={1} value={[m.clock]} onValueChange={(v) => edit({ clock: typeof v === "number" ? v : v[0] })} />
           <div className="text-[11px] text-muted-foreground">
             {m.clock === 0 ? "Not needed for this plan" : shards ? `${shards} power shard${shards > 1 ? "s" : ""}` : "No power shards"}
           </div>
@@ -96,7 +91,7 @@ export function SupplyNodeView({ data: { part } }: NodeProps<SupplyNode>) {
   return (
     <Card inputs={false} className="w-52">
       <div className="flex items-center gap-3 p-3">
-        <IconTile src={`/icons/${D.items[part.item]?.icon}.png`} className="size-9" />
+        <IconTile src={`icons/${D.items[part.item]?.icon}.png`} className="size-9" />
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold">{itemName(part.item)}</div>
           <div className="text-[11px] text-muted-foreground tabular-nums">Incoming belt · {fmt(part.rate)} {unit(part.item)}</div>
@@ -130,7 +125,7 @@ export function GroupNodeView({ data: { group: g } }: NodeProps<GroupNode>) {
       </div>
       <div className="px-3 pb-2">
         {options.length > 1 ? (
-          <Select value={current} onValueChange={(v) => update((s) => ({ choice: { ...s.choice, [item]: v } }))}>
+          <Select value={current} items={options.map((o) => ({ value: o.id, label: recipeName(o) }))} onValueChange={(v) => v && update((s) => ({ choice: { ...s.choice, [item]: v } }))}>
             <SelectTrigger size="sm" className="nodrag h-7 w-full text-xs"><SelectValue /></SelectTrigger>
             <SelectContent className="max-h-80">
               {options.map((o) => (
@@ -183,7 +178,7 @@ export function SinkNodeView({ data: { sink } }: NodeProps<SinkNode>) {
     return (
       <Card inputs={false} className="w-60 border-destructive/60 bg-destructive/5">
         <div className="flex items-center gap-3 p-3">
-          <IconTile src={`/icons/${D.items[item]?.icon}.png`} className="size-9" />
+          <IconTile src={`icons/${D.items[item]?.icon}.png`} className="size-9" />
           <div className="min-w-0 flex-1">
             <div className="truncate text-sm font-semibold">{itemName(item)}</div>
             <div className="flex items-center gap-1 text-[11px] text-destructive"><AlertTriangle className="size-3" />Nothing supplies this</div>
@@ -203,7 +198,7 @@ export function SinkNodeView({ data: { sink } }: NodeProps<SinkNode>) {
     return (
       <Card className="w-52 border-dashed">
         <div className="flex items-center gap-3 p-3">
-          <IconTile src={`/icons/${D.items[item]?.icon}.png`} className="size-9" />
+          <IconTile src={`icons/${D.items[item]?.icon}.png`} className="size-9" />
           <div className="min-w-0">
             <div className="truncate text-sm font-medium">{itemName(item)}</div>
             <div className="text-[11px] text-muted-foreground tabular-nums">Byproduct · {fmt(sink.rate)} {unit(item)}</div>
@@ -218,7 +213,7 @@ export function SinkNodeView({ data: { sink } }: NodeProps<SinkNode>) {
   return (
     <Card className="border-brand/50 bg-brand/5 ring-4 ring-brand/10">
       <div className="flex items-center gap-3 p-3">
-        <IconTile src={`/icons/${D.items[item]?.icon}.png`} className="bg-brand/15" />
+        <IconTile src={`icons/${D.items[item]?.icon}.png`} className="bg-brand/15" />
         <div className="min-w-0 flex-1">
           <div className="text-[11px] font-medium tracking-wide text-brand uppercase">
             {sink.fromLeftover ? `From leftover ${itemName(sink.fromLeftover)}` : "Output"}
@@ -253,7 +248,7 @@ export function PowerNodeView({ data: { power: p } }: NodeProps<PowerNode>) {
   return (
     <Card outputs={false} className="border-emerald-500/50 bg-emerald-500/5">
       <div className="flex items-center gap-3 p-3 pb-2">
-        <IconTile src={machineIcon(p.generator)} badge={`/icons/${D.items[p.item]?.icon}.png`} />
+        <IconTile src={machineIcon(p.generator)} badge={`icons/${D.items[p.item]?.icon}.png`} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl font-bold tabular-nums">{p.count}×</span>

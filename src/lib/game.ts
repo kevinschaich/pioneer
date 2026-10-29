@@ -28,8 +28,8 @@ for (const r of D.recipes) for (const [it] of r.out) (recipesFor[it] ??= []).pus
 export const itemName = (id: string) => D.items[id]?.name ?? id
 export const isLiquid = (id: string) => !!D.items[id]?.liquid
 export const unit = (id: string) => (isLiquid(id) ? "m³/min" : "/min")
-export const itemIcon = (id: string) => (D.items[id] ? `/icons/${D.items[id].icon}.png` : "")
-export const machineIcon = (id: string) => (D.machines[id] ? `/icons/${D.machines[id].icon}.png` : "")
+export const itemIcon = (id: string) => (D.items[id] ? `icons/${D.items[id].icon}.png` : "")
+export const machineIcon = (id: string) => (D.machines[id] ? `icons/${D.machines[id].icon}.png` : "")
 export const recipePerMin = (r: Recipe, amount: number) => (amount * 60) / r.time
 export const recipeName = (r: Recipe) => r.name.replace(/^Alternate: /, "")
 

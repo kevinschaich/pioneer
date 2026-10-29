@@ -1,18 +1,7 @@
 import { useMemo, type ReactNode } from "react"
-import { AlertTriangle, Map as MapIcon, Moon, Workflow, Plus, RotateCcw, Sparkles, Sun, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { Slider } from "@/components/ui/slider"
-import { Switch } from "@/components/ui/switch"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { AlertTriangle, Map as MapIcon, Workflow, Plus, RotateCcw, Sparkles, X } from "lucide-react"
 import { Icon, ItemIcon, ItemPicker } from "@/components/item-picker"
 import { MapPanel } from "@/components/map/map-panel"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   BELTS, D, MINERS, PIPES, PURITY, allItems, fmt, isLiquid, itemName, machineIcon, producibleItems, resourceItems, unit,
   type Purity,
@@ -21,6 +10,7 @@ import { nodeRate, optimizeRecipes } from "@/lib/solver"
 import { buildCost } from "@/lib/cost"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
+import { Button, Byline, Input, Label, ScrollArea, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tabs, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
 
 export function Section({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -62,8 +52,8 @@ export function MinerControls() {
     <>
             <div className="space-y-1.5">
               <Label className="text-xs">Miner</Label>
-              <ToggleGroup type="single" variant="outline" className="w-full" value={String(s.miner)}
-                onValueChange={(v) => v && update({ miner: +v })}>
+              <ToggleGroup variant="outline" className="w-full" value={[String(s.miner)]}
+                onValueChange={([v]) => v && update({ miner: +v })}>
                 {MINERS.map((m) => (
                   <ToggleGroupItem key={m.tier} value={String(m.tier)} className="flex-1 gap-1.5 text-xs">
                     <Icon src={machineIcon(m.id)} size={18} />Mk.{m.tier}
@@ -86,8 +76,8 @@ export function MinerControls() {
   )
 }
 
-export function Sidebar({ dark, onToggleDark, view, onView }: {
-  dark: boolean; onToggleDark: () => void; view: View; onView: (v: View) => void
+export function Sidebar({ view, onView }: {
+  view: View; onView: (v: View) => void
 }) {
   const { state: s, update, sup, max, perUnit, rates, sol, power, buildings, plan } = usePlanner()
   // The clock the plan runs each row's first miner at.
@@ -108,9 +98,6 @@ export function Sidebar({ dark, onToggleDark, view, onView }: {
           <div className="text-sm font-semibold">Satisfactory Planner</div>
           <div className="text-[11px] text-muted-foreground">Update 1.0 · all recipes & alternates</div>
         </div>
-        <Button variant="ghost" size="icon" className="size-8" onClick={onToggleDark} aria-label="Toggle theme">
-          {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
-        </Button>
       </header>
       <div className="border-b px-4 py-2.5">
         <Tabs value={view} onValueChange={(v) => onView(v as View)}>
@@ -121,15 +108,15 @@ export function Sidebar({ dark, onToggleDark, view, onView }: {
         </Tabs>
       </div>
 
-      {view === "map" ? <MapPanel /> : <ScrollArea className="min-h-0 flex-1 [&_[data-radix-scroll-area-viewport]>div]:!block">
+      {view === "map" ? <MapPanel /> : <ScrollArea className="min-h-0 flex-1 [&_[data-slot=scroll-area-viewport]>div]:!block">
         <Section title="Produce" action={
           <Button variant="ghost" size="sm" className="h-6 px-2 text-xs"
             onClick={() => update((st) => ({ targets: [...st.targets, { id: newId(), item: "Desc_IronPlate_C", amount: st.mode === "max" ? 1 : 30 }] }))}>
             <Plus className="size-3.5" />Add
           </Button>
         }>
-          <ToggleGroup type="single" variant="outline" className="w-full" value={s.mode}
-            onValueChange={(v) => v && update((st) => ({
+          <ToggleGroup variant="outline" className="w-full" value={[s.mode]}
+            onValueChange={([v]) => v && update((st) => ({
               mode: v as "max" | "fixed" | "equal",
               // Carry the current rates over so switching modes doesn't jump.
               targets: st.targets.map((t) => {
@@ -218,13 +205,11 @@ export function Sidebar({ dark, onToggleDark, view, onView }: {
           <MinerControls />
           <div className="space-y-1.5">
             <Label className="text-xs">Conveyor belt</Label>
-            <ToggleGroup type="single" variant="outline" className="w-full" value={String(s.belt)}
-              onValueChange={(v) => v && update({ belt: +v })}>
+            <ToggleGroup variant="outline" className="w-full" value={[String(s.belt)]}
+              onValueChange={([v]) => v && update({ belt: +v })}>
               {BELTS.map((b, i) => (
                 <Tooltip key={b}>
-                  <TooltipTrigger asChild>
-                    <ToggleGroupItem value={String(i)} className="flex-1 px-0 text-xs">{i + 1}</ToggleGroupItem>
-                  </TooltipTrigger>
+                  <TooltipTrigger render={<ToggleGroupItem value={String(i)} className="flex-1 px-0 text-xs" />}>{i + 1}</TooltipTrigger>
                   <TooltipContent>Mk.{i + 1} · {b}/min</TooltipContent>
                 </Tooltip>
               ))}
@@ -233,8 +218,8 @@ export function Sidebar({ dark, onToggleDark, view, onView }: {
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Pipeline</Label>
-            <ToggleGroup type="single" variant="outline" className="w-full" value={String(s.pipe)}
-              onValueChange={(v) => v && update({ pipe: +v })}>
+            <ToggleGroup variant="outline" className="w-full" value={[String(s.pipe)]}
+              onValueChange={([v]) => v && update({ pipe: +v })}>
               {PIPES.map((p, i) => (
                 <ToggleGroupItem key={p} value={String(i)} className="flex-1 text-xs">Mk.{i + 1} · {p} m³</ToggleGroupItem>
               ))}
@@ -377,6 +362,9 @@ export function Sidebar({ dark, onToggleDark, view, onView }: {
           <p className="text-[11px] text-muted-foreground">Machines plus an extractor for each node used. Belts, pipes, splitters and foundations aren't included.</p>
         </Section>
       </ScrollArea>}
+      <div className="border-t px-4 py-2.5">
+        <Byline repo="kevinschaich/satisfactory-planner" />
+      </div>
     </aside>
   )
 }
