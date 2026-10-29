@@ -1,10 +1,10 @@
-[![Satisfactory Planner by kevinschaich](https://kevinschaich.com/og/satisfactory-planner.png)](https://kevinschaich.com/project/satisfactory-planner/)
+[![Pioneer by kevinschaich](https://kevinschaich.com/og/pioneer.png)](https://kevinschaich.com/project/pioneer/)
 
-# Satisfactory Planner
+# Pioneer
 
-Plan your Satisfactory factory from your own resource nodes
+The Satisfactory companion for planning your next build
 
-**[Try it →](https://kevinschaich.com/project/satisfactory-planner/)**
+**[Try it →](https://kevinschaich.com/project/pioneer/)**
 
 ## How it works
 

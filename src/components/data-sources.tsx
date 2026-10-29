@@ -35,7 +35,7 @@ export function DataSources({ trigger }: { trigger: ReactElement }) {
             </div>
           ))}
         </dl>
-        <a href="https://github.com/kevinschaich/satisfactory-planner#credits-and-third-party-material" target="_blank" rel="noopener" className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+        <a href="https://github.com/kevinschaich/pioneer#credits-and-third-party-material" target="_blank" rel="noopener" className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
           Full credits, including software
         </a>
       </DialogContent>

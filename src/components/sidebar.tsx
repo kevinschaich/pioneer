@@ -95,7 +95,7 @@ export function Sidebar({ view, onView }: {
           <Icon src={machineIcon("Desc_AssemblerMk1_C")} size={22} />
         </div>
         <div className="min-w-0 flex-1 leading-tight">
-          <div className="text-sm font-semibold">Satisfactory Planner</div>
+          <div className="text-sm font-semibold">Pioneer</div>
           <div className="text-[11px] text-muted-foreground">Update 1.0 · all recipes & alternates</div>
         </div>
       </header>
@@ -363,7 +363,7 @@ export function Sidebar({ view, onView }: {
         </Section>
       </ScrollArea>}
       <div className="border-t px-4 py-2.5">
-        <Byline repo="kevinschaich/satisfactory-planner" />
+        <Byline repo="kevinschaich/pioneer" />
       </div>
     </aside>
   )
