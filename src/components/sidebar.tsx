@@ -10,7 +10,7 @@ import { nodeRate, optimizeRecipes } from "@/lib/solver"
 import { buildCost } from "@/lib/cost"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Button, Byline, Input, Label, ScrollArea, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tabs, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
+import { Button, Byline, Input, Label, ScrollArea, Segmented, SegmentedItem, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
 
 export function Section({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -52,14 +52,14 @@ export function MinerControls() {
     <>
             <div className="space-y-1.5">
               <Label className="text-xs">Miner</Label>
-              <ToggleGroup variant="outline" className="w-full" value={[String(s.miner)]}
-                onValueChange={([v]) => v && update({ miner: +v })}>
+              <Segmented value={String(s.miner)}
+                onValueChange={(v) => update({ miner: +v })}>
                 {MINERS.map((m) => (
-                  <ToggleGroupItem key={m.tier} value={String(m.tier)} className="flex-1 gap-1.5 text-xs">
+                  <SegmentedItem key={m.tier} value={String(m.tier)} className="flex-1 gap-1.5 text-xs">
                     <Icon src={machineIcon(m.id)} size={18} />Mk.{m.tier}
-                  </ToggleGroupItem>
+                  </SegmentedItem>
                 ))}
-              </ToggleGroup>
+              </Segmented>
             </div>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -100,12 +100,10 @@ export function Sidebar({ view, onView }: {
         </div>
       </header>
       <div className="border-b px-4 py-2.5">
-        <Tabs value={view} onValueChange={(v) => onView(v as View)}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="planner"><Workflow className="size-3.5" />Planner</TabsTrigger>
-            <TabsTrigger value="map"><MapIcon className="size-3.5" />Map</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <Segmented value={view} onValueChange={onView}>
+          <SegmentedItem value="planner"><Workflow className="size-3.5" />Planner</SegmentedItem>
+          <SegmentedItem value="map"><MapIcon className="size-3.5" />Map</SegmentedItem>
+        </Segmented>
       </div>
 
       {view === "map" ? <MapPanel /> : <ScrollArea className="min-h-0 flex-1 [&_[data-slot=scroll-area-viewport]>div]:!block">
@@ -115,8 +113,8 @@ export function Sidebar({ view, onView }: {
             <Plus className="size-3.5" />Add
           </Button>
         }>
-          <ToggleGroup variant="outline" className="w-full" value={[s.mode]}
-            onValueChange={([v]) => v && update((st) => ({
+          <Segmented value={s.mode}
+            onValueChange={(v) => update((st) => ({
               mode: v as "max" | "fixed" | "equal",
               // Carry the current rates over so switching modes doesn't jump.
               targets: st.targets.map((t) => {
@@ -124,10 +122,10 @@ export function Sidebar({ view, onView }: {
                 return { ...t, amount: v === "fixed" ? +fmt(r) || 1 : 1 }
               }),
             }))}>
-            <ToggleGroupItem value="max" className="flex-1 px-1 text-xs">Max ratio</ToggleGroupItem>
-            <ToggleGroupItem value="fixed" className="flex-1 px-1 text-xs">Fixed rates</ToggleGroupItem>
-            <ToggleGroupItem value="equal" className="flex-1 px-1 text-xs">Equal share</ToggleGroupItem>
-          </ToggleGroup>
+            <SegmentedItem value="max" className="flex-1 px-1 text-xs">Max ratio</SegmentedItem>
+            <SegmentedItem value="fixed" className="flex-1 px-1 text-xs">Fixed rates</SegmentedItem>
+            <SegmentedItem value="equal" className="flex-1 px-1 text-xs">Equal share</SegmentedItem>
+          </Segmented>
           <p className="text-[11px] text-muted-foreground">
             {s.mode === "max" ? "As much as your inputs allow, keeping the products at the ratio you set."
               : s.mode === "fixed" ? "Exactly the rates you set."
@@ -205,25 +203,25 @@ export function Sidebar({ view, onView }: {
           <MinerControls />
           <div className="space-y-1.5">
             <Label className="text-xs">Conveyor belt</Label>
-            <ToggleGroup variant="outline" className="w-full" value={[String(s.belt)]}
-              onValueChange={([v]) => v && update({ belt: +v })}>
+            <Segmented value={String(s.belt)}
+              onValueChange={(v) => update({ belt: +v })}>
               {BELTS.map((b, i) => (
                 <Tooltip key={b}>
-                  <TooltipTrigger render={<ToggleGroupItem value={String(i)} className="flex-1 px-0 text-xs" />}>{i + 1}</TooltipTrigger>
+                  <TooltipTrigger render={<SegmentedItem value={String(i)} className="flex-1 px-0 text-xs" />}>{i + 1}</TooltipTrigger>
                   <TooltipContent>Mk.{i + 1} · {b}/min</TooltipContent>
                 </Tooltip>
               ))}
-            </ToggleGroup>
+            </Segmented>
             <div className="text-[11px] text-muted-foreground">Mk.{s.belt + 1} · {BELTS[s.belt]} items/min</div>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Pipeline</Label>
-            <ToggleGroup variant="outline" className="w-full" value={[String(s.pipe)]}
-              onValueChange={([v]) => v && update({ pipe: +v })}>
+            <Segmented value={String(s.pipe)}
+              onValueChange={(v) => update({ pipe: +v })}>
               {PIPES.map((p, i) => (
-                <ToggleGroupItem key={p} value={String(i)} className="flex-1 text-xs">Mk.{i + 1} · {p} m³</ToggleGroupItem>
+                <SegmentedItem key={p} value={String(i)} className="flex-1 text-xs">Mk.{i + 1} · {p} m³</SegmentedItem>
               ))}
-            </ToggleGroup>
+            </Segmented>
           </div>
         </Section>
 
