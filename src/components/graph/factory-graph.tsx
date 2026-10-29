@@ -1,3 +1,4 @@
+import { DataSources } from "@/components/data-sources"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   Background, BackgroundVariant, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, useEdgesState,
@@ -125,6 +126,9 @@ function Graph({ onShowMap }: { onShowMap: () => void }) {
       <Controls showInteractive={false} className="overflow-hidden !rounded-lg !border !shadow-sm" />
       <MiniMap pannable zoomable className="!rounded-lg !border !shadow-sm" nodeBorderRadius={8}
         nodeColor={(n) => (n.type === "miner" ? "var(--muted-foreground)" : n.type === "power" ? "oklch(0.7 0.17 160)" : n.type === "sink" ? "var(--brand)" : "var(--muted)")} />
+      <Panel position="bottom-right" className="!mr-[230px] !mb-3">
+        <DataSources trigger={<button type="button" className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">Data sources</button>} />
+      </Panel>
       <Panel position="top-right" className="flex items-center gap-1.5">
         <Button size="sm" className="shadow-sm" onClick={() => { runSiteSearch(); onShowMap() }}>
           <Factory className="size-3.5" />Find build site

@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react"
-import { Check, Factory, Home, Workflow, Maximize, MousePointerClick, Minus, Plus, X } from "lucide-react"
+import { Check, Factory, Home, Info, Workflow, Maximize, MousePointerClick, Minus, Plus, X } from "lucide-react"
+import { DataSources } from "@/components/data-sources"
 import { Icon, ItemIcon } from "@/components/item-picker"
 import { useMapUi } from "@/components/map/map-context"
 import { fmt, itemIcon, itemName, unit } from "@/lib/game"
@@ -573,6 +574,7 @@ export function ResourceMap({ onShowPlanner }: { onShowPlanner: () => void }) {
             <I className="size-4" />
           </Button>
         ))}
+        <DataSources trigger={<Button variant="ghost" size="icon" className="size-8 rounded-none border-t text-muted-foreground" aria-label="Data sources"><Info className="size-4" /></Button>} />
       </div>
     </div>
   )
