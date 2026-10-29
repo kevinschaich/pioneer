@@ -1,11 +1,11 @@
 import { DataSources } from "@/components/data-sources"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import {
-  Background, BackgroundVariant, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, useEdgesState,
+  Background, BackgroundVariant, ControlButton, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, useEdgesState,
   useNodesState, useReactFlow, type Node,
 } from "@xyflow/react"
 import ELK from "elkjs/lib/elk.bundled.js"
-import { Factory, LayoutGrid, Maximize } from "lucide-react"
+import { Factory, Info, LayoutGrid, Maximize } from "lucide-react"
 import { useMapUi } from "@/components/map/map-context"
 import { edgeTypes, type FlowEdge } from "@/components/graph/flow-edge"
 import { nodeTypes } from "@/components/graph/nodes"
@@ -123,12 +123,11 @@ function Graph({ onShowMap }: { onShowMap: () => void }) {
       className="bg-canvas"
     >
       <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} className="!bg-canvas" />
-      <Controls showInteractive={false} className="overflow-hidden !rounded-lg !border !shadow-sm" />
+      <Controls showInteractive={false} className="overflow-hidden !rounded-lg !border !shadow-sm">
+        <DataSources trigger={<ControlButton aria-label="Data sources" title="Data sources" className="text-muted-foreground"><Info /></ControlButton>} />
+      </Controls>
       <MiniMap pannable zoomable className="!rounded-lg !border !shadow-sm" nodeBorderRadius={8}
         nodeColor={(n) => (n.type === "miner" ? "var(--muted-foreground)" : n.type === "power" ? "oklch(0.7 0.17 160)" : n.type === "sink" ? "var(--brand)" : "var(--muted)")} />
-      <Panel position="bottom-right" className="!mr-[230px] !mb-3">
-        <DataSources trigger={<button type="button" className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">Data sources</button>} />
-      </Panel>
       <Panel position="top-right" className="flex items-center gap-1.5">
         <Button size="sm" className="shadow-sm" onClick={() => { runSiteSearch(); onShowMap() }}>
           <Factory className="size-3.5" />Find build site

@@ -11,7 +11,7 @@ const SOURCES: { what: string; from: string; href: string; license: string }[] =
   { what: "Game mechanics reference", from: "Satisfactory Wiki", href: "https://satisfactory.wiki.gg/", license: "CC BY-NC-SA 4.0" },
 ]
 
-/** The data sources dialog, opened from a quiet trigger placed where it fits (a link by the minimap, an "i" on the map). */
+/** The data sources dialog, opened from a quiet trigger placed where it fits (an "i" in the graph and map controls). */
 export function DataSources({ trigger }: { trigger: ReactElement }) {
   return (
     <Dialog>
