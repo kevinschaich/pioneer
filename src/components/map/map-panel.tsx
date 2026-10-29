@@ -8,7 +8,7 @@ import { MAP_RESOURCES, PURITY_COLOR, WORLD_NODES, distLabel, metres, nodeById, 
 import type { MapFilter } from "@/lib/solver"
 import { usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Button, Label, ScrollArea, Tabs, TabsList, TabsTrigger, Separator, Slider, Switch, ToggleGroup, ToggleGroupItem } from "@kevinschaich/components"
+import { Button, Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle, Label, ScrollArea, Separator, Slider, Stat, Switch, Tabs, TabsList, TabsTrigger, Toggle, ToggleGroup, ToggleGroupItem } from "@kevinschaich/components"
 
 const PURITIES = Object.keys(PURITY) as Purity[]
 
@@ -30,17 +30,12 @@ export function MapPanel() {
           <TabsTrigger value="extract" className="flex-1 gap-1.5 text-xs data-active:text-emerald-500"><CircleCheck className="size-3.5" />Mark extracted</TabsTrigger>
         </TabsList></Tabs>
         <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-lg border bg-card/50 px-3 py-2">
-            <div className="text-[11px] text-muted-foreground">Extracted nodes</div>
-            <div className="text-base font-semibold tabular-nums">{usedCount}</div>
-          </div>
-          <div className="rounded-lg border bg-card/50 px-3 py-2">
-            <div className="text-[11px] text-muted-foreground">Resources</div>
-            <div className="flex h-6 items-center gap-0.5">
+          <Stat boxed label="Extracted nodes" value={usedCount} />
+          <Stat boxed label="Resources" value={usedCount === 0 ? null : (
+            <span className="flex h-6 items-center gap-0.5">
               {[...new Set(state.used.map((id) => nodeById[id]?.res).filter(Boolean))].slice(0, 7).map((r) => <ItemIcon key={r} id={r} size={18} />)}
-              {usedCount === 0 && <span className="text-base font-semibold">—</span>}
-            </div>
-          </div>
+            </span>
+          )} />
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
@@ -108,12 +103,18 @@ export function MapPanel() {
         </div>
       }>
         {f.solo ? (
-          <div className="flex items-center gap-2 rounded-lg border bg-accent/50 px-2.5 py-1.5 text-xs">
-            <span className="size-2 rounded-full" style={{ background: PURITY_COLOR[f.solo.purity] }} />
-            <ItemIcon id={f.solo.res} size={18} />
-            <span className="flex-1">Only <span className="font-medium capitalize">{f.solo.purity}</span> {itemName(f.solo.res)}</span>
-            <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => setMap({ solo: null })}>Show all</Button>
-          </div>
+          <Item variant="muted" size="sm">
+            <ItemMedia>
+              <span className="size-2 rounded-full" style={{ background: PURITY_COLOR[f.solo.purity] }} />
+              <ItemIcon id={f.solo.res} size={18} />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle className="font-normal">Only <span className="font-medium capitalize">{f.solo.purity}</span> {itemName(f.solo.res)}</ItemTitle>
+            </ItemContent>
+            <ItemActions>
+              <Button variant="ghost" size="xs" onClick={() => setMap({ solo: null })}>Show all</Button>
+            </ItemActions>
+          </Item>
         ) : (
           <p className="text-[11px] text-muted-foreground">Click a coloured dot to show only that purity of that resource.</p>
         )}
@@ -128,27 +129,26 @@ export function MapPanel() {
               <div key={res}
                 className={cn("flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent",
                   (f.solo ? !soloHere : !on) && "opacity-45", soloHere && "bg-accent")}>
-                <button type="button" onClick={toggle} className="flex min-w-0 flex-1 items-center gap-2.5 text-left">
+                <Button variant="ghost" size="sm" onClick={toggle} className="h-auto min-w-0 flex-1 justify-start gap-2.5 px-0 font-normal hover:bg-transparent">
                   <ItemIcon id={res} size={22} />
-                  <span className="flex-1 truncate">{itemName(res)}</span>
-                </button>
+                  <span className="flex-1 truncate text-left">{itemName(res)}</span>
+                </Button>
                 <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground tabular-nums">
                   {PURITIES.map((p) => {
                     const active = soloHere && f.solo!.purity === p
                     return (
-                      <button key={p} type="button" disabled={!by(p)}
+                      <Toggle key={p} size="sm" disabled={!by(p)} pressed={active}
                         title={active ? "Show everything again" : `Show only ${p} ${itemName(res)}`}
-                        onClick={() => setMap({ solo: active ? null : { res, purity: p } })}
-                        className={cn("flex w-7 items-center justify-center gap-1 rounded py-0.5 transition-colors enabled:hover:bg-background disabled:opacity-40",
-                          active && "bg-background font-semibold text-foreground ring-1 ring-border")}>
+                        onPressedChange={() => setMap({ solo: active ? null : { res, purity: p } })}
+                        className="h-6 min-w-0 gap-1 px-1 text-[11px] tabular-nums">
                         <span className="size-2 rounded-full" style={{ background: PURITY_COLOR[p] }} />{by(p)}
-                      </button>
+                      </Toggle>
                     )
                   })}
                 </span>
-                <button type="button" onClick={toggle} aria-label={on ? "Hide" : "Show"}>
-                  {on ? <Eye className="size-3.5 text-muted-foreground" /> : <EyeOff className="size-3.5 text-muted-foreground" />}
-                </button>
+                <Button variant="ghost" size="icon-xs" onClick={toggle} aria-label={on ? "Hide" : "Show"} className="text-muted-foreground">
+                  {on ? <Eye /> : <EyeOff />}
+                </Button>
               </div>
             )
           })}
@@ -164,14 +164,13 @@ export function MapPanel() {
         ) : (
           <div className="-mx-2 space-y-0.5">
             {state.used.map((id) => nodeById[id]).filter(Boolean).map((n) => (
-              <button key={n.id} type="button" onClick={() => focusOn(n.id)}
-                className="flex w-full items-center gap-2.5 rounded-md px-2 py-1 text-left hover:bg-accent">
-                <ItemIcon id={n.res} size={18} />
-                <span className="flex-1 truncate text-xs">{nodeLabel(n)}</span>
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground capitalize">
+              <Item key={n.id} size="sm" className="py-1" render={<button type="button" onClick={() => focusOn(n.id)} />}>
+                <ItemMedia><ItemIcon id={n.res} size={18} /></ItemMedia>
+                <ItemContent><ItemTitle className="text-xs font-normal">{nodeLabel(n)}</ItemTitle></ItemContent>
+                <ItemActions className="gap-1 text-[11px] text-muted-foreground capitalize">
                   <span className="size-1.5 rounded-full" style={{ background: PURITY_COLOR[n.purity] }} />{n.kind === "satellite" ? "well" : n.purity}
-                </span>
-              </button>
+                </ItemActions>
+              </Item>
             ))}
           </div>
         )}
@@ -185,15 +184,15 @@ export function MapPanel() {
           <div className="-mx-2 space-y-0.5">
             {claimed.map((n) => (
               <div key={n.id} className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-accent">
-                <button type="button" className="flex min-w-0 flex-1 items-center gap-2.5 text-left" onClick={() => focusOn(n.id)}>
-                  <ItemIcon id={n.res} size={20} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm">{nodeLabel(n)}</span>
-                    <span className="block text-[11px] text-muted-foreground capitalize tabular-nums">
+                <Item size="sm" className="min-w-0 flex-1 p-0" render={<button type="button" onClick={() => focusOn(n.id)} />}>
+                  <ItemMedia><ItemIcon id={n.res} size={20} /></ItemMedia>
+                  <ItemContent className="min-w-0">
+                    <ItemTitle className="font-normal">{nodeLabel(n)}</ItemTitle>
+                    <ItemDescription className="text-[11px] capitalize tabular-nums">
                       {n.kind === "satellite" ? "well · " : ""}{n.purity} · {worldNodeRate(state, n)}
-                    </span>
-                  </span>
-                </button>
+                    </ItemDescription>
+                  </ItemContent>
+                </Item>
                 <Button variant="ghost" size="icon" className="size-6 opacity-0 group-hover:opacity-100" aria-label="Remove" onClick={() => toggleClaim(n)}>
                   <X className="size-3.5" />
                 </Button>

@@ -10,7 +10,7 @@ import { nodeRate, optimizeRecipes } from "@/lib/solver"
 import { buildCost } from "@/lib/cost"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Button, Byline, Input, Label, ScrollArea, Tabs, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
+import { Alert, AlertDescription, AlertTitle, Badge, Button, Byline, Stat, Input, Label, ScrollArea, Tabs, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
 
 export function Section({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -32,16 +32,6 @@ const PRESETS: { name: string; items: [string, number][] }[] = [
   { name: "Construction", items: [["Desc_Cement_C", 2], ["Desc_IronPlateReinforced_C", 1], ["Desc_ModularFrame_C", 1]] },
   { name: "Electronics", items: [["Desc_CircuitBoard_C", 1], ["Desc_Computer_C", 1], ["Desc_HighSpeedConnector_C", 1]] },
 ]
-
-function Stat({ label, value, sub, className }: { label: string; value: ReactNode; sub?: ReactNode; className?: string }) {
-  return (
-    <div className={cn("rounded-lg border bg-card/50 px-3 py-2", className?.includes("col-span") && "col-span-2")}>
-      <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className={cn("truncate text-base font-semibold tabular-nums", className)}>{value}</div>
-      {sub && <div className="truncate text-[11px] text-muted-foreground">{sub}</div>}
-    </div>
-  )
-}
 
 export type View = "planner" | "map"
 
@@ -96,7 +86,6 @@ export function Sidebar({ view, onView }: {
         </div>
         <div className="min-w-0 flex-1 leading-tight">
           <div className="text-sm font-semibold">Pioneer</div>
-          <div className="text-[11px] text-muted-foreground">Update 1.0 · all recipes & alternates</div>
         </div>
       </header>
       <div className="border-b px-4 py-2.5">
@@ -177,24 +166,22 @@ export function Sidebar({ view, onView }: {
           </Select>
           <div className="grid grid-cols-2 gap-2">
             {plan.generated > 0 ? (
-              <Stat label="Net power" className={plan.generated >= power ? "text-emerald-600 dark:text-emerald-400" : undefined}
-                value={<>{plan.generated >= power ? "+" : ""}{fmt(plan.generated - power)} <span className="text-xs font-normal text-muted-foreground">MW</span></>}
+              <Stat boxed label="Net power" unit="MW"
+                value={<span className={plan.generated >= power ? "text-emerald-400" : undefined}>{plan.generated >= power ? "+" : ""}{fmt(plan.generated - power)}</span>}
                 sub={`makes ${fmt(plan.generated)} · uses ${fmt(power)}`} />
             ) : (
-              <Stat label="Power" value={<>{fmt(power)} <span className="text-xs font-normal text-muted-foreground">MW</span></>} />
+              <Stat boxed label="Power" value={fmt(power)} unit="MW" />
             )}
-            <Stat label="Buildings" value={buildings} />
-            <Stat label="Limited by" value={max.limiting ? itemName(max.limiting) : "—"} className="col-span-2 text-sm"
+            <Stat boxed label="Buildings" value={buildings} />
+            <Stat boxed size="sm" label="Limited by" value={max.limiting ? itemName(max.limiting) : null} className="col-span-2"
               sub={max.limiting && s.mode === "fixed" ? `Inputs support ${fmt(max.rate)}× these rates` : undefined} />
           </div>
           {max.missing.length > 0 && (
-            <div className="flex gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-2.5 text-xs">
-              <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-destructive" />
-              <div>
-                <span className="font-medium">Missing inputs: </span>
-                {max.missing.map(itemName).join(", ")}. Add them below or on the graph.
-              </div>
-            </div>
+            <Alert variant="destructive">
+              <AlertTriangle />
+              <AlertTitle>Missing inputs</AlertTitle>
+              <AlertDescription>{max.missing.map(itemName).join(", ")}. Add them below or on the graph.</AlertDescription>
+            </Alert>
           )}
         </Section>
 
@@ -341,11 +328,11 @@ export function Sidebar({ view, onView }: {
         <Section title="Build cost">
           <div className="flex flex-wrap gap-1.5">
             {cost.buildings.map(([m, n]) => (
-              <span key={m} className="flex items-center gap-1.5 rounded-md border py-0.5 pr-2 pl-1 text-xs" title={D.machines[m]?.name}>
+              <Badge key={m} variant="outline" className="h-auto gap-1.5 py-0.5 pl-1" title={D.machines[m]?.name}>
                 <Icon src={machineIcon(m)} size={20} />
                 <span className="text-muted-foreground">{D.machines[m]?.name}</span>
                 <span className="font-semibold tabular-nums">×{n}</span>
-              </span>
+              </Badge>
             ))}
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 pt-1">

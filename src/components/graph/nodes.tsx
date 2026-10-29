@@ -7,7 +7,7 @@ import type { GroupPlan, Junction, MinerPlan, PowerPlan, Sink } from "@/lib/plan
 import { recipeOf, shardsFor, type NodeInput, type PartInput } from "@/lib/solver"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Badge, Button, Input, Tabs, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Slider } from "@kevinschaich/components"
+import { Badge, Button, Card as UiCard, Input, Tabs, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Slider } from "@kevinschaich/components"
 
 export type MinerNode = Node<{ miner: MinerPlan }, "miner">
 export type SupplyNode = Node<{ part: PartInput }, "supply">
@@ -18,13 +18,14 @@ export type PowerNode = Node<{ power: PowerPlan }, "power">
 
 const handle = "!size-2 !border-2 !border-background !bg-muted-foreground"
 
+// A graph node: a shared Card with React Flow's connection handles.
 function Card({ children, className, inputs = true, outputs = true }: { children: ReactNode; className?: string; inputs?: boolean; outputs?: boolean }) {
   return (
-    <div className={cn("w-64 rounded-xl border bg-card text-card-foreground shadow-sm", className)}>
+    <UiCard className={cn("w-64 gap-0 overflow-visible py-0 shadow-sm", className)}>
       {inputs && <Handle type="target" position={Position.Left} className={handle} />}
       {children}
       {outputs && <Handle type="source" position={Position.Right} className={handle} />}
-    </div>
+    </UiCard>
   )
 }
 
@@ -73,8 +74,8 @@ export function MinerNodeView({ data: { miner: m } }: NodeProps<MinerNode>) {
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold tabular-nums">{m.clock === 0 ? "Off" : `${m.clock}%`}</span>
             {m.pinned
-              ? <button type="button" className="text-[11px] text-brand underline-offset-2 hover:underline" onClick={() => edit({ clock: undefined })}>Back to auto</button>
-              : <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">Auto</span>}
+              ? <Button variant="link" size="xs" className="h-auto px-0" onClick={() => edit({ clock: undefined })}>Back to auto</Button>
+              : <Badge variant="secondary">Auto</Badge>}
           </div>
           <Slider min={0} max={250} step={1} value={[m.clock]} onValueChange={(v) => edit({ clock: typeof v === "number" ? v : v[0] })} />
           <div className="text-[11px] text-muted-foreground">

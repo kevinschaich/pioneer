@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react"
-import { Check, Factory, Home, Info, Workflow, Maximize, MousePointerClick, Minus, Plus, X } from "lucide-react"
+import { Check, Factory, Home, Workflow, Maximize, MousePointerClick, Minus, Plus, X } from "lucide-react"
 import { DataSources } from "@/components/data-sources"
 import { Icon, ItemIcon } from "@/components/item-picker"
 import { useMapUi } from "@/components/map/map-context"
@@ -12,7 +12,7 @@ import type { Site } from "@/lib/site"
 import type { PlannerState } from "@/lib/solver"
 import { usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Badge, Button } from "@kevinschaich/components"
+import { Badge, Button, ButtonGroup, ButtonGroupSeparator, Card, CardDescription, Kbd, Stat } from "@kevinschaich/components"
 
 const MAX_K = 6
 const TILE_MAX_Z = 6
@@ -167,9 +167,6 @@ const MarkerLayer = memo(function MarkerLayer({ shown, state, claimedIds, usedId
   )
 })
 
-const Kbd = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <kbd className={cn("rounded border bg-muted px-1 font-sans text-[10px] leading-4", className)}>{children}</kbd>
-)
 
 // ---------- overlays ----------
 function Pin({ at, children, className, label }: { at: { x: number; y: number }; children: React.ReactNode; className?: string; label: string }) {
@@ -208,7 +205,7 @@ function NodeCard({ n, onClose }: { n: WorldNode; onClose: () => void }) {
   const sats = satellitesOf[n.id] || []
   const parent = n.well ? nodeById[n.well] : null
   return (
-    <div className="absolute top-4 right-4 z-50 w-72 rounded-xl border bg-background/95 shadow-lg backdrop-blur">
+    <Card glass className="absolute top-4 right-4 z-50 w-72 gap-0 py-0">
       <div className="flex items-start gap-3 p-4">
         <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-muted"><Icon src={iconFor(n)} size={38} /></div>
         <div className="min-w-0 flex-1">
@@ -225,25 +222,25 @@ function NodeCard({ n, onClose }: { n: WorldNode; onClose: () => void }) {
         </div>
         <Button variant="ghost" size="icon" className="-mt-1 -mr-2 size-7" onClick={onClose} aria-label="Close"><X className="size-4" /></Button>
       </div>
-      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 border-t px-4 py-3 text-xs">
-        <dt className="text-muted-foreground">Extraction</dt><dd className="text-right font-medium tabular-nums">{worldNodeRate(state, n)}</dd>
-        <dt className="text-muted-foreground">Position</dt><dd className="text-right tabular-nums">{metres(n.x)}, {metres(n.y)}</dd>
-        <dt className="text-muted-foreground">Altitude</dt><dd className="text-right tabular-nums">{metres(n.z)}</dd>
-
-      </dl>
+      <div className="grid grid-cols-3 gap-2 border-t px-4 py-3">
+        <Stat size="sm" label="Extraction" value={worldNodeRate(state, n)} />
+        <Stat size="sm" label="Position" value={`${metres(n.x)}, ${metres(n.y)}`} />
+        <Stat size="sm" label="Altitude" value={metres(n.z)} />
+      </div>
       {sats.length > 0 && (
         <div className="flex flex-wrap gap-1 border-t px-4 py-3">
           {sats.map((s) => (
-            <button key={s.id} onClick={() => focusOn(s.id)} title={`${s.purity} satellite`}
-              className={cn("size-4 rounded-full ring-1 ring-border transition hover:scale-125", state.used.includes(s.id) && "opacity-40")}
-              style={{ background: PURITY_COLOR[s.purity] }} />
+            <Button key={s.id} variant="ghost" size="icon-xs" onClick={() => focusOn(s.id)} title={`${s.purity} satellite`} aria-label={`${s.purity} satellite`}
+              className={cn(state.used.includes(s.id) && "opacity-40")}>
+              <span className="size-3 rounded-full ring-1 ring-border" style={{ background: PURITY_COLOR[s.purity] }} />
+            </Button>
           ))}
         </div>
       )}
       {parent && (
-        <button className="w-full border-t px-4 py-2 text-left text-xs text-muted-foreground hover:text-foreground" onClick={() => focusOn(parent.id)}>
+        <Button variant="ghost" size="sm" className="justify-start rounded-none border-t px-4 text-muted-foreground" onClick={() => focusOn(parent.id)}>
           Part of a resource well · {(satellitesOf[parent.id] || []).length} satellites →
-        </button>
+        </Button>
       )}
       {n.kind !== "geyser" && (
         <div className="grid grid-cols-2 gap-2 border-t p-3">
@@ -255,7 +252,7 @@ function NodeCard({ n, onClose }: { n: WorldNode; onClose: () => void }) {
           </Button>
         </div>
       )}
-    </div>
+    </Card>
   )
 }
 
@@ -265,7 +262,7 @@ function SiteCard({ onPlanned }: { onPlanned: () => void }) {
   if (!sites) return null
   const site = sites.list[sites.active]
   return (
-    <div className="absolute bottom-4 left-4 z-50 w-80 rounded-xl border bg-background/95 shadow-lg backdrop-blur">
+    <Card glass className="absolute bottom-4 left-4 z-50 w-80 gap-0 py-0">
       <div className="flex items-center gap-3 p-4 pb-3">
         <div className="flex shrink-0 -space-x-3">
           {sites.targets.slice(0, 3).map((t) => (
@@ -273,7 +270,7 @@ function SiteCard({ onPlanned }: { onPlanned: () => void }) {
           ))}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[11px] font-medium tracking-wide text-brand uppercase">Build site</div>
+          <CardDescription className="text-xs">Build site</CardDescription>
           <div className="truncate text-sm font-semibold">{sites.targets.map(itemName).join(" + ")}</div>
         </div>
         <Button variant="ghost" size="icon" className="-mr-2 size-7" onClick={() => setSites(null)} aria-label="Close"><X className="size-4" /></Button>
@@ -292,8 +289,8 @@ function SiteCard({ onPlanned }: { onPlanned: () => void }) {
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 border-t px-4 py-3">
-            <div><div className="text-[11px] text-muted-foreground">Total belt/pipe runs</div><div className="font-semibold tabular-nums">{distLabel(site.belt)}</div></div>
-            <div><div className="text-[11px] text-muted-foreground">To base</div><div className="font-semibold tabular-nums">{state.used.length ? distLabel(site.baseDist) : "No base yet"}</div></div>
+            <Stat size="sm" label="Total belt/pipe runs" value={distLabel(site.belt)} />
+            <Stat size="sm" label="To base" value={state.used.length ? distLabel(site.baseDist) : "No base yet"} />
           </div>
           <div className="max-h-56 space-y-2 overflow-y-auto border-t px-4 py-3">
             {site.needs.map((nd) => (
@@ -305,10 +302,9 @@ function SiteCard({ onPlanned }: { onPlanned: () => void }) {
                 </div>
                 <div className="flex flex-wrap gap-1 pl-6">
                   {nd.picks.map((pk) => (
-                    <button key={pk.node.id} onClick={() => focusOn(pk.node.id)}
-                      className="flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] tabular-nums transition-colors hover:bg-accent">
+                    <Button key={pk.node.id} variant="outline" size="xs" className="tabular-nums" onClick={() => focusOn(pk.node.id)}>
                       <span className="size-1.5 rounded-full" style={{ background: PURITY_COLOR[pk.node.purity] }} />{distLabel(pk.dist)}
-                    </button>
+                    </Button>
                   ))}
                   {nd.short > 0 && <span className="text-[10px] text-destructive">short {fmt(nd.short)} — not enough unused nodes</span>}
                 </div>
@@ -325,7 +321,7 @@ function SiteCard({ onPlanned }: { onPlanned: () => void }) {
           </div>
         </>
       )}
-    </div>
+    </Card>
   )
 }
 
@@ -519,7 +515,7 @@ export function ResourceMap({ onShowPlanner }: { onShowPlanner: () => void }) {
 
       {hovered && tip && hovered.id !== selected && (
         <div className="pointer-events-none absolute z-50 -translate-x-1/2 -translate-y-full pb-2" style={{ left: tip.x, top: tip.y }}>
-          <div className="flex items-center gap-2 rounded-md border bg-popover px-2.5 py-1.5 text-xs shadow-md">
+          <Card size="sm" className="flex-row items-center gap-2 px-2.5 py-1.5 text-xs shadow-md">
             {hovered.kind !== "well" && <span className="size-2 rounded-full" style={{ background: PURITY_COLOR[hovered.purity] }} />}
             <span className="font-medium">{nodeLabel(hovered)}</span>
             <span className="text-muted-foreground capitalize">{hovered.kind === "well" ? "well" : hovered.purity}</span>
@@ -529,11 +525,11 @@ export function ResourceMap({ onShowPlanner }: { onShowPlanner: () => void }) {
                 <Kbd>⌘</Kbd>extracted<Kbd className="ml-1">⌃</Kbd>plan
               </span>
             )}
-          </div>
+          </Card>
         </div>
       )}
 
-      <div className="pointer-events-none absolute top-4 left-4 z-40 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border bg-background/90 px-3 py-2 text-xs shadow-sm backdrop-blur">
+      <Card glass size="sm" className="pointer-events-none absolute top-4 left-4 z-40 flex-row flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-xs">
         <span className="font-medium tabular-nums">{counts.pure + counts.normal + counts.impure} nodes</span>
         {(["pure", "normal", "impure"] as const).map((p) => (
           <span key={p} className="flex items-center gap-1.5 text-muted-foreground capitalize">
@@ -552,30 +548,33 @@ export function ResourceMap({ onShowPlanner }: { onShowPlanner: () => void }) {
           <span className="grid size-2.5 place-items-center rounded-full bg-brand" />
           Planned<span className="text-foreground tabular-nums">{shown.filter((n) => n.kind !== "well" && claimedIds.has(n.id)).length}</span>
         </span>
-      </div>
+      </Card>
 
       {clickMode === "extract" && (
-        <div className="absolute top-16 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-500/40 bg-background/95 py-1.5 pr-4 pl-3 text-sm shadow-lg backdrop-blur">
+        <Card glass size="sm" className="absolute top-16 left-1/2 z-50 -translate-x-1/2 flex-row items-center gap-2 rounded-full py-1.5 pr-4 pl-3 text-sm">
           <MousePointerClick className="size-4 text-emerald-500" />Click nodes to mark them extracted
-        </div>
+        </Card>
       )}
 
       {selectedNode && <NodeCard n={selectedNode} onClose={() => setSelected(null)} />}
       <SiteCard onPlanned={onShowPlanner} />
 
-      <div className="absolute right-4 bottom-4 z-40 flex flex-col overflow-hidden rounded-lg border bg-background/90 shadow-sm backdrop-blur">
+      <Card glass size="sm" className="absolute right-4 bottom-4 z-40 p-1">
+        <ButtonGroup orientation="vertical" aria-label="Map view">
         {[
           { icon: Plus, label: "Zoom in", f: () => zoomAt(1.6, vpRef.current!.clientWidth / 2, vpRef.current!.clientHeight / 2, true) },
           { icon: Minus, label: "Zoom out", f: () => zoomAt(1 / 1.6, vpRef.current!.clientWidth / 2, vpRef.current!.clientHeight / 2, true) },
           { icon: Home, label: "Center on my base", f: () => fitBase(true) },
           { icon: Maximize, label: "Fit map", f: () => fit(true) },
         ].map(({ icon: I, label, f }) => (
-          <Button key={label} variant="ghost" size="icon" className="size-8 rounded-none border-b last:border-b-0" onClick={f} aria-label={label}>
-            <I className="size-4" />
+          <Button key={label} variant="ghost" size="icon" onClick={f} aria-label={label}>
+            <I />
           </Button>
         ))}
-        <DataSources trigger={<Button variant="ghost" size="icon" className="size-8 rounded-none border-t text-muted-foreground" aria-label="Data sources"><Info className="size-4" /></Button>} />
-      </div>
+        <ButtonGroupSeparator orientation="horizontal" />
+        <DataSources />
+        </ButtonGroup>
+      </Card>
     </div>
   )
 }
