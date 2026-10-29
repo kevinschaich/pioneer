@@ -3,5 +3,6 @@
     "name": "Pioneer",
     "tagline": "The Satisfactory companion for planning your next build",
     "icon": "factory",
-    "url": "https://pioneer-flax-mu.vercel.app"
+    "url": "https://pioneer-flax-mu.vercel.app",
+    "screenshot": "screenshot.jpg"
 }
