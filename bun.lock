@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "satisfactory-planner",
+      "name": "pioneer",
       "dependencies": {
         "@kevinschaich/components": "^0.1.2",
         "@xyflow/react": "^12.12.0",
