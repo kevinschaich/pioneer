@@ -40,17 +40,3 @@ Everything below came from somewhere else. This project is unofficial and not af
 | World map tiles (`public/tiles/`, zoom 0–6) | [rockfactory/satisfactory-logistics](https://github.com/rockfactory/satisfactory-logistics) tile CDN (`satisfactory-logistics-maps.fra1.cdn.digitaloceanspaces.com/map/v2`); map art is Coffee Stain's | Map art: Coffee Stain | Map tab background |
 | Building footprints, Blueprint Designer sizes, machine dimensions | [Satisfactory Wiki (wiki.gg)](https://satisfactory.wiki.gg/) | CC BY-NC-SA 4.0 | Earlier layout features |
 | Game mechanics reference (miner rates, purity multipliers, belt/pipe speeds, overclocking, power shards) | [Satisfactory Wiki (wiki.gg)](https://satisfactory.wiki.gg/), [Satisfactory Wiki (Fandom)](https://satisfactory.fandom.com/), [satisfactory-calculator.com](https://satisfactory-calculator.com) | CC BY-NC-SA 4.0 (wikis) | Checking numbers; the interactive map was the design reference for the Map tab |
-
-### Software
-
-| Package | License |
-|---|---|
-| [React](https://react.dev) | MIT |
-| [Vite](https://vitejs.dev) | MIT |
-| [Tailwind CSS](https://tailwindcss.com) | MIT |
-| [shadcn/ui](https://ui.shadcn.com) components (via `@kevinschaich/components`) | MIT |
-| [Base UI](https://base-ui.com) | MIT |
-| [React Flow (@xyflow/react)](https://reactflow.dev) | MIT |
-| [elkjs](https://github.com/kieler/elkjs) (graph layout) | EPL-2.0 |
-| [Lucide](https://lucide.dev) icons | ISC |
-| [clsx](https://github.com/lukeed/clsx), [tailwind-merge](https://github.com/dcastil/tailwind-merge) | MIT |
