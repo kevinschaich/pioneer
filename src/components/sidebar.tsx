@@ -10,7 +10,7 @@ import { nodeRate, optimizeRecipes } from "@/lib/solver"
 import { buildCost } from "@/lib/cost"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Button, Byline, Input, Label, ScrollArea, Segmented, SegmentedItem, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
+import { Button, Byline, Input, Label, ScrollArea, Tabs, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Separator, Slider, Switch, Tooltip, TooltipContent, TooltipTrigger } from "@kevinschaich/components"
 
 export function Section({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
@@ -52,14 +52,14 @@ export function MinerControls() {
     <>
             <div className="space-y-1.5">
               <Label className="text-xs">Miner</Label>
-              <Segmented value={String(s.miner)}
-                onValueChange={(v) => update({ miner: +v })}>
+              <Tabs value={String(s.miner)}
+                onValueChange={(v) => update({ miner: +v })}><TabsList className="w-full">
                 {MINERS.map((m) => (
-                  <SegmentedItem key={m.tier} value={String(m.tier)} className="flex-1 gap-1.5 text-xs">
+                  <TabsTrigger key={m.tier} value={String(m.tier)} className="flex-1 gap-1.5 text-xs">
                     <Icon src={machineIcon(m.id)} size={18} />Mk.{m.tier}
-                  </SegmentedItem>
+                  </TabsTrigger>
                 ))}
-              </Segmented>
+              </TabsList></Tabs>
             </div>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -100,10 +100,10 @@ export function Sidebar({ view, onView }: {
         </div>
       </header>
       <div className="border-b px-4 py-2.5">
-        <Segmented value={view} onValueChange={onView}>
-          <SegmentedItem value="planner"><Workflow className="size-3.5" />Planner</SegmentedItem>
-          <SegmentedItem value="map"><MapIcon className="size-3.5" />Map</SegmentedItem>
-        </Segmented>
+        <Tabs value={view} onValueChange={(v) => onView(v as View)}><TabsList className="w-full">
+          <TabsTrigger value="planner"><Workflow className="size-3.5" />Planner</TabsTrigger>
+          <TabsTrigger value="map"><MapIcon className="size-3.5" />Map</TabsTrigger>
+        </TabsList></Tabs>
       </div>
 
       {view === "map" ? <MapPanel /> : <ScrollArea className="min-h-0 flex-1 [&_[data-slot=scroll-area-viewport]>div]:!block">
@@ -113,7 +113,7 @@ export function Sidebar({ view, onView }: {
             <Plus className="size-3.5" />Add
           </Button>
         }>
-          <Segmented value={s.mode}
+          <Tabs value={s.mode}
             onValueChange={(v) => update((st) => ({
               mode: v as "max" | "fixed" | "equal",
               // Carry the current rates over so switching modes doesn't jump.
@@ -121,11 +121,11 @@ export function Sidebar({ view, onView }: {
                 const r = rates.find((x) => x.id === t.id)?.rate ?? t.amount
                 return { ...t, amount: v === "fixed" ? +fmt(r) || 1 : 1 }
               }),
-            }))}>
-            <SegmentedItem value="max" className="flex-1 px-1 text-xs">Max ratio</SegmentedItem>
-            <SegmentedItem value="fixed" className="flex-1 px-1 text-xs">Fixed rates</SegmentedItem>
-            <SegmentedItem value="equal" className="flex-1 px-1 text-xs">Equal share</SegmentedItem>
-          </Segmented>
+            }))}><TabsList className="w-full">
+            <TabsTrigger value="max" className="flex-1 px-1 text-xs">Max ratio</TabsTrigger>
+            <TabsTrigger value="fixed" className="flex-1 px-1 text-xs">Fixed rates</TabsTrigger>
+            <TabsTrigger value="equal" className="flex-1 px-1 text-xs">Equal share</TabsTrigger>
+          </TabsList></Tabs>
           <p className="text-[11px] text-muted-foreground">
             {s.mode === "max" ? "As much as your inputs allow, keeping the products at the ratio you set."
               : s.mode === "fixed" ? "Exactly the rates you set."
@@ -203,25 +203,25 @@ export function Sidebar({ view, onView }: {
           <MinerControls />
           <div className="space-y-1.5">
             <Label className="text-xs">Conveyor belt</Label>
-            <Segmented value={String(s.belt)}
-              onValueChange={(v) => update({ belt: +v })}>
+            <Tabs value={String(s.belt)}
+              onValueChange={(v) => update({ belt: +v })}><TabsList className="w-full">
               {BELTS.map((b, i) => (
                 <Tooltip key={b}>
-                  <TooltipTrigger render={<SegmentedItem value={String(i)} className="flex-1 px-0 text-xs" />}>{i + 1}</TooltipTrigger>
+                  <TooltipTrigger render={<TabsTrigger value={String(i)} className="flex-1 px-0 text-xs" />}>{i + 1}</TooltipTrigger>
                   <TooltipContent>Mk.{i + 1} · {b}/min</TooltipContent>
                 </Tooltip>
               ))}
-            </Segmented>
+            </TabsList></Tabs>
             <div className="text-[11px] text-muted-foreground">Mk.{s.belt + 1} · {BELTS[s.belt]} items/min</div>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Pipeline</Label>
-            <Segmented value={String(s.pipe)}
-              onValueChange={(v) => update({ pipe: +v })}>
+            <Tabs value={String(s.pipe)}
+              onValueChange={(v) => update({ pipe: +v })}><TabsList className="w-full">
               {PIPES.map((p, i) => (
-                <SegmentedItem key={p} value={String(i)} className="flex-1 text-xs">Mk.{i + 1} · {p} m³</SegmentedItem>
+                <TabsTrigger key={p} value={String(i)} className="flex-1 text-xs">Mk.{i + 1} · {p} m³</TabsTrigger>
               ))}
-            </Segmented>
+            </TabsList></Tabs>
           </div>
         </Section>
 

@@ -10,7 +10,7 @@
     "data": "curl -sSL https://raw.githubusercontent.com/greeny/SatisfactoryTools/master/data/data1.0.json -o /tmp/sf-data.json && python3 tools/build_data.py /tmp/sf-data.json > src/data/game.json"
   },
   "dependencies": {
-    "@kevinschaich/components": "^0.2.0",
+    "@kevinschaich/components": "^0.3.0",
     "@xyflow/react": "^12.12.0",
     "clsx": "^2.1.1",
     "elkjs": "^0.12.0",

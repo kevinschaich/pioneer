@@ -8,7 +8,7 @@ import { MAP_RESOURCES, PURITY_COLOR, WORLD_NODES, distLabel, metres, nodeById, 
 import type { MapFilter } from "@/lib/solver"
 import { usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Button, Label, ScrollArea, Segmented, SegmentedItem, Separator, Slider, Switch, ToggleGroup, ToggleGroupItem } from "@kevinschaich/components"
+import { Button, Label, ScrollArea, Tabs, TabsList, TabsTrigger, Separator, Slider, Switch, ToggleGroup, ToggleGroupItem } from "@kevinschaich/components"
 
 const PURITIES = Object.keys(PURITY) as Purity[]
 
@@ -24,11 +24,11 @@ export function MapPanel() {
         <p className="text-[11px] text-muted-foreground">
           Your base is every node you've marked extracted. Shortcuts on any node: ⌘-click or right-click marks it extracted, Ctrl-click adds it to the planner.
         </p>
-        <Segmented value={clickMode}
-          onValueChange={(v) => setClickMode(v as "inspect" | "extract")}>
-          <SegmentedItem value="inspect" className="flex-1 gap-1.5 text-xs"><MousePointer2 className="size-3.5" />Inspect</SegmentedItem>
-          <SegmentedItem value="extract" className="flex-1 gap-1.5 text-xs data-[pressed]:text-emerald-500"><CircleCheck className="size-3.5" />Mark extracted</SegmentedItem>
-        </Segmented>
+        <Tabs value={clickMode}
+          onValueChange={(v) => setClickMode(v as "inspect" | "extract")}><TabsList className="w-full">
+          <TabsTrigger value="inspect" className="flex-1 gap-1.5 text-xs"><MousePointer2 className="size-3.5" />Inspect</TabsTrigger>
+          <TabsTrigger value="extract" className="flex-1 gap-1.5 text-xs data-active:text-emerald-500"><CircleCheck className="size-3.5" />Mark extracted</TabsTrigger>
+        </TabsList></Tabs>
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-lg border bg-card/50 px-3 py-2">
             <div className="text-[11px] text-muted-foreground">Extracted nodes</div>

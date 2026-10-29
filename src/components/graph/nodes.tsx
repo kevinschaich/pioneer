@@ -7,7 +7,7 @@ import type { GroupPlan, Junction, MinerPlan, PowerPlan, Sink } from "@/lib/plan
 import { recipeOf, shardsFor, type NodeInput, type PartInput } from "@/lib/solver"
 import { newId, usePlanner } from "@/lib/store"
 import { cn } from "@/lib/utils"
-import { Badge, Button, Input, Segmented, SegmentedItem, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Slider } from "@kevinschaich/components"
+import { Badge, Button, Input, Tabs, TabsList, TabsTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Slider } from "@kevinschaich/components"
 
 export type MinerNode = Node<{ miner: MinerPlan }, "miner">
 export type SupplyNode = Node<{ part: PartInput }, "supply">
@@ -65,9 +65,9 @@ export function MinerNodeView({ data: { miner: m } }: NodeProps<MinerNode>) {
       </div>
       <div className="nodrag space-y-2.5 px-3 pb-3">
         {!row.well && item !== "Desc_Water_C" && (
-          <Segmented className="h-7" value={row.purity} onValueChange={(v) => edit({ purity: v as Purity })}>
-            {Object.keys(PURITY).map((p) => <SegmentedItem key={p} value={p} className="h-6 flex-1 text-[10px] capitalize">{p}</SegmentedItem>)}
-          </Segmented>
+          <Tabs value={row.purity} onValueChange={(v) => edit({ purity: v as Purity })}><TabsList className="w-full h-7">
+            {Object.keys(PURITY).map((p) => <TabsTrigger key={p} value={p} className="h-6 flex-1 text-[10px] capitalize">{p}</TabsTrigger>)}
+          </TabsList></Tabs>
         )}
         <div className="space-y-1.5">
           <div className="flex items-baseline justify-between">
